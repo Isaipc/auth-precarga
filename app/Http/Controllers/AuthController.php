@@ -20,7 +20,7 @@ class AuthController extends Controller
             'nombre' => 'required|string|max:' . NOM_LEN,
             'login' => 'required|string|max:' . LOG_LEN .'|unique:inscaptur',
             // 'login' => 'required|string|email|unique:users',
-            'password' => 'required|string|max:'. PSW_LEN,
+            'password' => 'required|string',
         ]);
 
         User::create([
@@ -42,7 +42,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'login' => 'required|string|max:' . LOG_LEN,
-            'password' => 'required|string|max:' . PSW_LEN,
+            'password' => 'required|string',
             // 'remember_me' => 'boolean'
         ]);
 
