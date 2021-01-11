@@ -26,17 +26,18 @@ class PrecargaController extends Controller
             ->whereRaw('insdretic.placve = BINARY ?', 'd')
             ->where('insdretic.retper', $request->periodo)
             ->select(
-                DB::raw('@irow:=@irow+1 AS row_number'),
+                // DB::raw('@irow:=@irow+1 AS row_number'),
                 'insdretic.id',
                 'insdretic.retper AS periodo',
                 'insdretic.matcve AS clave',
-                'insdmater.matnom AS materia',
+                'insdmater.matnom AS nombre',
+                'insdmater.matnco AS nombre_corto',
                 'insdmater.mathte AS teoricas',
                 'insdmater.mathpr AS practicas',
                 'insdmater.matcre AS creditos',
             )
-            // ->orderBy('insdretic.retper')
-            ->orderBy('row_number')
+            ->orderBy('insdretic.retper')
+            // ->orderBy('row_number')
             ->get();
 
 
@@ -65,7 +66,7 @@ class PrecargaController extends Controller
             ->whereRaw('insdretic.placve = BINARY ?', 'd')
             ->where('insdretic.retper', $alumno->nvoper)
             ->select(
-                DB::raw('@irow:=@irow+1 AS row_number'),
+                DB::raw('@irow:=@irow+1 AS rownumber'),
                 'insdretic.id',
                 'insdretic.retper AS periodo',
                 'insdretic.matcve AS clave',
