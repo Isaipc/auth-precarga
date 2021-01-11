@@ -14,11 +14,14 @@ define("LOG_LEN", "9");
 
 class AuthController extends Controller
 {
+    /**
+     * Registro de usuario
+     */
     public function signup(Request $request)
     {
         $request->validate([
             'nombre' => 'required|string|max:' . NOM_LEN,
-            'login' => 'required|string|max:' . LOG_LEN .'|unique:inscaptur',
+            'login' => 'required|string|max:' . LOG_LEN . '|unique:inscaptur',
             // 'login' => 'required|string|email|unique:users',
             'password' => 'required|string',
         ]);
@@ -58,11 +61,10 @@ class AuthController extends Controller
         // dd($pass);
 
         $attempt = User::where('login', $request->login)
-            ->where('password', '=' , $pass)
+            ->where('password', '=', $pass)
             ->first();
 
-        if ($attempt == null)
-        {
+        if ($attempt == null) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -102,6 +104,9 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json([
+            'usuario' => $request->user(),
+            'detalles' => $request->user()->details()
+        ]);
     }
 }
