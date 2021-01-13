@@ -66,7 +66,7 @@ class PrecargaController extends Controller
             ->whereRaw('insdretic.placve = BINARY ?', 'd')
             ->where('insdretic.retper', $alumno->nvoper)
             ->select(
-                DB::raw('@irow:=@irow+1 AS rownumber'),
+                // DB::raw('@irow:=@irow+1 AS rownumber'),
                 'insdretic.id',
                 'insdretic.retper AS periodo',
                 'insdretic.matcve AS clave',
@@ -75,8 +75,8 @@ class PrecargaController extends Controller
                 'insdmater.mathpr AS practicas',
                 'insdmater.matcre AS creditos',
             )
-            // ->orderBy('insdretic.retper')
-            ->orderBy('row_number')
+            ->orderBy('insdretic.retper')
+            // ->orderBy('row_number')
             ->get();
 
 
