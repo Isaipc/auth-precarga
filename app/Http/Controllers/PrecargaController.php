@@ -70,10 +70,13 @@ class PrecargaController extends Controller
                 'insdretic.id',
                 'insdretic.retper AS periodo',
                 'insdretic.matcve AS clave',
-                'insdmater.matnom AS materia',
+                'insdmater.matnom AS nombre',
+                'insdmater.matnco AS nombre_corto',
                 'insdmater.mathte AS teoricas',
                 'insdmater.mathpr AS practicas',
                 'insdmater.matcre AS creditos',
+                DB::raw("'N' AS tipo"),
+
             )
             ->orderBy('insdretic.retper')
             // ->orderBy('row_number')
@@ -99,7 +102,7 @@ class PrecargaController extends Controller
 
 
         $request->materias->dd();
-        
+
         // DB::table('insprecarga')->insertOrIgnore([]);
 
         return response()->json(['message' => 'Precarga finalizada'], 201);
