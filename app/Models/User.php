@@ -51,8 +51,12 @@ class User extends Authenticatable
     {
         return DB::table('insdclist')
             ->join('inscarreras', 'inscarreras.id', '=', 'insdclist.carcve')
+            ->join('inscaptur', 'inscaptur.login', '=', 'insdclist.aluctr')
             ->where('insdclist.aluctr', $this->login)
             ->select(
+                'inscaptur.id',
+                'inscaptur.nombre',
+                'insdclist.aluctr AS control',
                 'inscarreras.nombre AS nombre_carrera',
                 'inscarreras.nomcort AS nomcorto_carrera',
                 'insdclist.clinpe AS periodo',
@@ -62,6 +66,6 @@ class User extends Authenticatable
                 'insdclist.registro',
                 'insdclist.inscrito'
             )
-            ->get();
+            ->first();
     }
 }
