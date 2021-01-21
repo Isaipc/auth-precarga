@@ -9,35 +9,25 @@ class PrecargaController extends Controller
 {
 
     /**
-     * Solicita las materias de la reticula en base a un periodo en especifico
+     * Solicita las materias precargadas del alumno
      */
-    public function obtenerMaterias(Request $request)
+    public function solicitar(Request $request)
     {
-        $request->validate([
-            'periodo' => 'required|int'
-        ]);
-
-
-        // $rows = DB::selectRaw('ROW_NUMBER() over (ORDER BY insdretic.id)  AS row_num');
-        DB::statement(DB::raw('set @irow:=0'));
-
-        $materias = DB::table('insdretic')
-            ->join('insdmater', 'insdmater.matcve', '=', 'insdretic.matcve')
-            ->whereRaw('insdretic.placve = BINARY ?', 'd')
-            ->where('insdretic.retper', $request->periodo)
+        $materias = DB::table('insprecarga')
+            ->join('insdmater', 'insdmater.matcve', '=', 'insprecarga.matcve')
+            ->where('insprecarga.aluctr', $request->user()->login)
             ->select(
-                // DB::raw('@irow:=@irow+1 AS row_number'),
-                'insdretic.id',
-                'insdretic.retper AS periodo',
-                'insdretic.matcve AS clave',
+                'insprecarga.id',
+                'insprecarga.grupo AS grupo',
+                'insprecarga.periodo AS periodo',
+                'insprecarga.matcve AS clave',
                 'insdmater.matnom AS nombre',
                 'insdmater.matnco AS nombre_corto',
                 'insdmater.mathte AS teoricas',
                 'insdmater.mathpr AS practicas',
                 'insdmater.matcre AS creditos',
             )
-            ->orderBy('insdretic.retper')
-            // ->orderBy('row_number')
+            ->orderBy('insprecarga.periodo')
             ->get();
 
 
@@ -49,14 +39,10 @@ class PrecargaController extends Controller
 
 
     /**
-     * Solicita las materias a seleccionar para la precarga
+     * Solicita las materias disponibles para la precarga
      */
-    public function solicitar(Request $request)
+    public function obtenerMaterias(Request $request)
     {
-        DB::statement(DB::raw('set @irow:=0'));
-
-        // dd(auth('api')->user()->login);
-
         $alumno = DB::table('insdclist')
             ->where('aluctr', $request->user()->login)
             ->first();
@@ -66,7 +52,6 @@ class PrecargaController extends Controller
             ->whereRaw('insdretic.placve = BINARY ?', 'd')
             ->where('insdretic.retper', $alumno->nvoper)
             ->select(
-                // DB::raw('@irow:=@irow+1 AS rownumber'),
                 'insdretic.id',
                 'insdretic.retper AS periodo',
                 'insdretic.matcve AS clave',
@@ -79,7 +64,6 @@ class PrecargaController extends Controller
 
             )
             ->orderBy('insdretic.retper')
-            // ->orderBy('row_number')
             ->get();
 
 
