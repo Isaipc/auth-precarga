@@ -11,7 +11,7 @@ class PrecargaController extends Controller
     /**
      * Solicita las materias precargadas del alumno
      */
-    public function solicitar(Request $request)
+    public function obtenerPrecarga(Request $request)
     {
         $materias = DB::table('insprecarga')
             ->join('insdmater', 'insdmater.matcve', '=', 'insprecarga.matcve')
