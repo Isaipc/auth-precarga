@@ -34,7 +34,7 @@ class AuthController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Successfully created user!'
+            'message' => 'Usuario registrado exitosamente'
         ], 201);
     }
 
@@ -46,30 +46,17 @@ class AuthController extends Controller
         $request->validate([
             'login' => 'required|string|max:' . LOG_LEN,
             'password' => 'required|string',
-            // 'remember_me' => 'boolean'
         ]);
 
-        // $credentials = request(['login', 'password']);
-
-        // if (!Auth::attempt($credentials)) {
-        //     return response()->json([
-        //         'message' => 'Unauthorized'
-        //     ], 401);
-        // }
-
         $pass = crypt(trim($request->password), SALT_STR);
-        // dd($pass);
 
         $attempt = User::where('login', $request->login)
             ->where('password', '=', $pass)
             ->first();
 
         if ($attempt == null) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'No está autorizado'], 401);
         }
-
-        // dd($attempt);
-        // $user = $request->user();
 
         $tokenResult = $attempt->createToken('Personal Access Token');
         $token = $tokenResult->token;
@@ -95,7 +82,7 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => 'Sesión cerrada exitosamente'
         ]);
     }
 
