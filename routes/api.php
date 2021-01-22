@@ -33,6 +33,6 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'precarga'], function () {
     Route::get('obtenerMaterias', 'PrecargaController@obtenerMaterias');
 
     // Guardar la precarga con las materias seleccionadas:
-    Route::get('guardar', 'PrecargaController@guardar');
+    Route::post('guardar', 'PrecargaController@guardar');
 });
 
