@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
+define('RETICULA', 'd');
 class PrecargaController extends Controller
 {
 
@@ -37,40 +39,67 @@ class PrecargaController extends Controller
         ]);
     }
 
-
     /**
      * Solicita las materias disponibles para la precarga
      */
     public function obtenerMaterias(Request $request)
     {
-        $alumno = DB::table('insdclist')
+
+        // se obtienen las materias cursadas por el alumno
+        $materias_cursadas = DB::table('insdlista')
+            ->select('matcve AS clave')
             ->where('aluctr', $request->user()->login)
-            ->first();
-
-        $materias = DB::table('insdretic')
-            ->join('insdmater', 'insdmater.matcve', '=', 'insdretic.matcve')
-            ->whereRaw('insdretic.placve = BINARY ?', 'd')
-            ->where('insdretic.retper', $alumno->nvoper)
-            ->select(
-                'insdretic.id',
-                'insdretic.retper AS periodo',
-                'insdretic.matcve AS clave',
-                'insdmater.matnom AS nombre',
-                'insdmater.matnco AS nombre_corto',
-                'insdmater.mathte AS teoricas',
-                'insdmater.mathpr AS practicas',
-                'insdmater.matcre AS creditos',
-                DB::raw("'N' AS tipo"),
-
-            )
-            ->orderBy('insdretic.retper')
+            ->where('liscal', '>', 0)
             ->get();
 
 
+        $arr = array();
+        foreach ($materias_cursadas as $key => $value) {
+            array_push($arr, $value->clave);
+        }
+
+        // Se extraen los periodos del reticula
+        $reticula = DB::table('insdretic')
+            ->select('retper AS periodo')
+            ->whereRaw('placve = BINARY ?', RETICULA)
+            ->orderBy('periodo')
+            ->distinct()
+            ->get();
+
+
+
+        // Se recorren los periodos
+        foreach ($reticula as $key => $value) {
+
+            // Se extraen las materias de un periodo especifico
+            $materias = DB::table('insdretic')
+                ->join('insdmater', 'insdmater.matcve', '=', 'insdretic.matcve')
+                ->select(
+                    'insdretic.id',
+                    'insdretic.retper AS periodo',
+                    'insdretic.matcve AS clave',
+                    'insdmater.matnom AS nombre',
+                    'insdmater.matnco AS nombre_corto',
+                    'insdmater.mathte AS teoricas',
+                    'insdmater.mathpr AS practicas',
+                    'insdmater.matcre AS creditos',
+                    DB::raw("'N' AS tipo"),
+
+                )
+                ->whereRaw('placve = BINARY ?', RETICULA)
+                ->where('insdretic.retper', $value->periodo)
+                ->whereNotIn('insdretic.matcve', $arr)
+                ->get();
+
+            $value->total_materias = $materias->count();
+
+            $value->materias = $materias;
+        }
+
+
         return response()->json([
-            'total_materias' => $materias->count(),
-            'total_creditos' => $materias->sum('creditos'),
-            'materias' => $materias,
+            'num_periodos' => $reticula->count(),
+            'reticula' => $reticula,
         ]);
     }
 
@@ -84,10 +113,28 @@ class PrecargaController extends Controller
             'materias' => 'required'
         ]);
 
+        $num_control = $request->user()->login;
 
-        $request->materias->dd();
+        DB::table('insprecarga')
+            ->where('insprecarga.aluctr', $num_control)
+            ->delete();
 
-        // DB::table('insprecarga')->insertOrIgnore([]);
+        $materias = array();
+
+        foreach ($request->materias as $key => $value) {
+            
+            $_materia = [
+                'aluctr' =>  $num_control,
+                'periodo' =>  $value['periodo'],
+                'matcve' =>  $value['clave'],
+                'matcre' =>  $value['creditos'],
+                // 'grupo' => '',
+            ];
+
+            array_push($materias, $_materia);
+        }    
+        
+        DB::table('insprecarga')->insert($materias);
 
         return response()->json(['message' => 'Precarga finalizada'], 201);
     }
