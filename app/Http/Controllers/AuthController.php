@@ -92,7 +92,7 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json(
-            $request->user()->details()
+            $request->user()->detallesDelAlumno()
         );
     }
 }
