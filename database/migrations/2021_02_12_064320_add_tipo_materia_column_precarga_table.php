@@ -14,7 +14,7 @@ class AddTipoMateriaColumnPrecargaTable extends Migration
     public function up()
     {
         Schema::table('insprecarga', function (Blueprint $table){
-            $table->string('tipo', 2);
+            $table->string('tipo', 2)->nullable();
         });
     }
 
