@@ -94,7 +94,7 @@ class User extends Authenticatable
     {
         // Se puede solucionar con una tabla 🤔
         return $this->materias('R')
-            ->where('insdretic.retper', $this->alumno->nvoper)
+            // ->where('insdretic.retper', $this->alumno->nvoper)
             ->whereIn('insdretic.matcve', function ($query) {
                 $query->select('matcve')
                     ->from('insdlista')
