@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MateriaPrecarga;
 use Illuminate\Http\Request;
+
 class PrecargaController extends Controller
 {
     protected $max_creditos = 0;
@@ -75,24 +76,7 @@ class PrecargaController extends Controller
         //Se extraen las materias subidas:
         $materias = $request->materias;
 
-
-        $this->validarPrecarga($user, $materias);
-
-        // Limpiar las precargas del alumno:
-        MateriaPrecarga::where('aluctr', $user->login)->delete();
-
-        foreach ($materias as $value) {
-            MateriaPrecarga::create([
-                'aluctr' =>  $user->login,
-                'periodo' =>  $value['periodo'],
-                'matcve' =>  $value['clave'],
-                'matcre' =>  $value['creditos'],
-                'tipo' =>  $value['tipo'],
-                // 'grupo' => '',
-            ]);
-        }
-
-        return response()->json(['message' => 'Precarga finalizada'], 201);
+        return $this->validarPrecarga($user, $materias);
     }
 
     protected function validarPrecarga($user, $materias)
@@ -124,12 +108,27 @@ class PrecargaController extends Controller
                     $this->max_creditos],
                 422
             );
-
         if (count($materias) > $this->max_materias)
             return response()->json(
                 ['message' => 'No puede exceder el límite de materias: ' .
                     $this->max_materias],
                 422
             );
+
+        // Limpiar las precargas del alumno:
+        MateriaPrecarga::where('aluctr', $user->login)->delete();
+
+        foreach ($materias as $value) {
+            MateriaPrecarga::create([
+                'aluctr' =>  $user->login,
+                'periodo' =>  $value['periodo'],
+                'matcve' =>  $value['clave'],
+                'matcre' =>  $value['creditos'],
+                'tipo' =>  $value['tipo'],
+                // 'grupo' => '',
+            ]);
+        }
+
+        return response()->json(['message' => 'Precarga finalizada'], 201);
     }
 }
