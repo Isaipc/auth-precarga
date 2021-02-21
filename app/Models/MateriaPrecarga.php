@@ -19,4 +19,9 @@ class MateriaPrecarga extends Model
         'matcre',
         'tipo',
     ];
+
+    public function materia()
+    {
+        return $this->hasOne(Materia::class, 'matcve', 'matcve');
+    }
 }
