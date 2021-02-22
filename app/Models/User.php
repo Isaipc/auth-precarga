@@ -151,6 +151,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(MateriaPrecarga::class, 'aluctr', 'login');
     }
+    
+    public function detalleCarrera()
+    {
+        return $this->hasOne(Carrera::class, 'id', 'carrera');
+    }
 
 
     public function materias($tipo)
