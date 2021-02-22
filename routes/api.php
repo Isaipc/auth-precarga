@@ -25,7 +25,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'auth:api', 'prefix' => 'precarga'], function () {
-    
+
     // Solicita las materias precargadas del alumno:
     Route::get('obtenerPrecarga', 'PrecargaController@obtenerPrecarga');
 
@@ -34,5 +34,6 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'precarga'], function () {
 
     // Guardar la precarga con las materias seleccionadas:
     Route::post('guardar', 'PrecargaController@guardar');
-});
 
+    Route::get('pdf', 'PdfController@generarPdf');
+});
