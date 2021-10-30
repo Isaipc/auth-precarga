@@ -1,7 +1,15 @@
 runtime: php73
+env: flex
+
+runtime_config:
+  document_root: public
+
+skip_files:
+  - .env
 
 env_variables:
   ## Put production environment variables here.
+  APP_LOG: errorlog
   APP_KEY: base64:z7dSgHaELg9dwATMOwbpD6BYHgsF9X4URdVFG5SB73A=
   APP_STORAGE: /tmp
   VIEW_COMPILED_PATH: /tmp
