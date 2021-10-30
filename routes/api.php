@@ -14,16 +14,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Gestiona el grupo de rutas para las sesiones de usuario
 Route::group(['prefix' => 'auth'], function () {
+
+    //Inicia la sesión
     Route::post('login', 'AuthController@login');
+    
+    // Registra un nuevo usuario
     Route::post('signup', 'AuthController@signup');
 
     Route::group(['middleware' => 'auth:api'], function () {
+
+        //Termina la sesión
         Route::get('logout', 'AuthController@logout');
+
+        //Obtiene los datos del usuario/alumno
         Route::get('user', 'AuthController@user');
     });
 });
 
+//Gestiona el grupo de rutas para las operaciones con las materias
 Route::group(['middleware' => 'auth:api', 'prefix' => 'precarga'], function () {
 
     // Solicita las materias precargadas del alumno:
@@ -35,5 +45,6 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'precarga'], function () {
     // Guardar la precarga con las materias seleccionadas:
     Route::post('guardar', 'PrecargaController@guardar');
 
+    // Genera el documento de la precarga con todos los datos:
     Route::get('pdf', 'PdfController@generarPdf');
 });
