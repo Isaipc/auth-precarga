@@ -79,6 +79,9 @@ class PrecargaController extends Controller
         return $this->validarPrecarga($user, $materias);
     }
 
+    /**
+     * Valida las materias seleccionadas para precarga 
+     */
     protected function validarPrecarga($user, $materias)
     {
         $total_creditos = 0;
